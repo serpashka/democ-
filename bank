@@ -1,0 +1,162 @@
+using System;
+using System.Collections.Generic;
+
+namespace BankAccountDemo
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            var bank = new Bank();
+            bank.Run();
+        }
+    }
+
+    public class Bank
+    {
+        private List<Account> accounts = new List<Account>();
+        private bool running = true;
+
+        public void Run()
+        {
+            Console.WriteLine("Welcome to the Simple Bank System!");
+
+            while (running)
+            {
+                Console.WriteLine("\nPlease choose an option:");
+                Console.WriteLine("1. Create a new account");
+                Console.WriteLine("2. Deposit");
+                Console.WriteLine("3. Withdraw");
+                Console.WriteLine("4. Print all accounts");
+                Console.WriteLine("5. Exit");
+
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        CreateAccount();
+                        break;
+                    case "2":
+                        MakeDeposit();
+                        break;
+                    case "3":
+                        MakeWithdrawal();
+                        break;
+                    case "4":
+                        PrintAccounts();
+                        break;
+                    case "5":
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option, try again.");
+                        break;
+                }
+            }
+
+            Console.WriteLine("Thank you for using the Simple Bank System. Goodbye!");
+        }
+
+        private void CreateAccount()
+        {
+            Console.Write("Enter the account holder's name: ");
+            string name = Console.ReadLine();
+            Console.Write("Enter the initial balance: ");
+            decimal initialBalance = decimal.Parse(Console.ReadLine());
+
+            var account = new Account(name, initialBalance);
+            accounts.Add(account);
+
+            Console.WriteLine($"Account for {name} created with account number {account.Number} and balance {account.Balance:C}.");
+        }
+
+        private void MakeDeposit()
+        {
+            var account = FindAccount();
+            if (account == null) return;
+
+            Console.Write("Enter the amount to deposit: ");
+            decimal amount = decimal.Parse(Console.ReadLine());
+            account.Deposit(amount);
+
+            Console.WriteLine($"Deposit successful. New balance is {account.Balance:C}.");
+        }
+
+        private void MakeWithdrawal()
+        {
+            var account = FindAccount();
+            if (account == null) return;
+
+            Console.Write("Enter the amount to withdraw: ");
+            decimal amount = decimal.Parse(Console.ReadLine());
+            bool success = account.Withdraw(amount);
+
+            if (success)
+            {
+                Console.WriteLine($"Withdrawal successful. New balance is {account.Balance:C}.");
+            }
+            else
+            {
+                Console.WriteLine("Withdrawal failed. Insufficient funds.");
+            }
+        }
+
+        private void PrintAccounts()
+        {
+            Console.WriteLine("Account List:");
+            foreach (var account in accounts)
+            {
+                Console.WriteLine(account);
+            }
+        }
+
+        private Account FindAccount()
+        {
+            Console.Write("Enter the account number: ");
+            int accountNumber = int.Parse(Console.ReadLine());
+            var account = accounts.Find(a => a.Number == accountNumber);
+
+            if (account == null)
+            {
+                Console.WriteLine("Account not found.");
+            }
+
+            return account;
+        }
+    }
+
+    public class Account
+    {
+        private static int accountNumberSeed = 1234567890;
+        public string Name { get; }
+        public decimal Balance { get; private set; }
+        public int Number { get; }
+
+        public Account(string name, decimal initialBalance)
+        {
+            Name = name;
+            Balance = initialBalance;
+            Number = accountNumberSeed++;
+        }
+
+        public void Deposit(decimal amount)
+        {
+            Balance += amount;
+        }
+
+        public bool Withdraw(decimal amount)
+        {
+            if (amount <= Balance)
+            {
+                Balance -= amount;
+                return true;
+            }
+
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return $"Account {Number} - {Name}, Balance: {Balance:C}";
+        }
+    }
+}
