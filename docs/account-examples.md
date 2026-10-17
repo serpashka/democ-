@@ -17,3 +17,4 @@ example identifiers.
 | Example | Opening balance | Deposit | Withdrawal | Accepted | Ending balance |
 | --- | --- | --- | --- | --- | --- |
 | 1 | 0.00 | 0.00 | 0.00 | true | 0.00 |
+| 2 | 20.00 | 0.00 | 6.02 | true | 13.98 |
